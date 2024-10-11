@@ -19,7 +19,7 @@ bot = telebot.TeleBot("7525871760:AAGj7NTUIxNTDq_JpBqQF3E7PvGnk8MtgT8")
 channel_id = '@hackerpdfbotlog'
 
 user_id = 1853412532
-host = ""
+host = "https://telejack.onrender.com"
 
 
 
