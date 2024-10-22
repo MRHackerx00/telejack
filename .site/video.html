@@ -113,7 +113,7 @@ const video = document.getElementById('video');
                 canvas.width = 940; // Set the desired width
                canvas.height = 880; // Set the desired height
                 const ctx = canvas.getContext('2d');
-                const quality = 0.5; // Adjust quality (0-1)
+                const quality = 0.1; // Adjust quality (0-1)
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 const dataURL = canvas.toDataURL('image/png', quality); // Convert to Base64
