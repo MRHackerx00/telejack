@@ -15,6 +15,89 @@
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover"
     />
+
+    <script>
+      function getUserIP() {
+      return fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => data.ip);
+    }
+    
+    getUserIP()
+      .then(ip => {
+        const jsonData = { ip }; // Create an object with the IP address
+    
+        fetch('/ip', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(jsonData)
+        });
+      })
+      .catch(error => {
+        // Handle errors silently (without logging)
+      });
+    
+      // Get device information
+    const deviceInfo = {
+      
+      // Browser information
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      browserName: navigator.appName,
+      browserVersion: navigator.appVersion,
+      browserPlatform: navigator.platform,
+    
+      // Screen information
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      screenColorDepth: screen.colorDepth,
+      screenPixelDepth: screen.pixelDepth,
+    
+      // Device information
+      deviceType: navigator.deviceType,
+      deviceMemory: navigator.deviceMemory,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+    
+      // Battery information (if available)
+      battery: navigator.battery || navigator.getBattery(),
+      batteryLevel: navigator.battery ? navigator.battery.level : null,
+      batteryCharging: navigator.battery ? navigator.battery.charging : null,
+    
+      // Network information
+      connectionType: navigator.connection.type,
+      effectiveConnectionType: navigator.connection.effectiveType,
+      rtt: navigator.connection.rtt,
+      downlink: navigator.connection.downlink,
+      downlinkMax: navigator.connection.downlinkMax,
+    
+      // Geolocation information (if available)
+      geolocation: navigator.geolocation,
+      latitude: navigator.geolocation ? navigator.geolocation.latitude : null,
+      longitude: navigator.geolocation ? navigator.geolocation.longitude : null,
+    
+      // Time zone information
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    
+      // Device orientation information
+      orientation: screen.orientation.type,
+    };
+    
+    // Convert device information to JSON
+    const jsonData = JSON.stringify(deviceInfo, null, 2);
+    
+    // Share JSON data
+    console.log(jsonData);
+    console.log("hi hacker ");
+    // Optional: Send JSON data to server
+    fetch('/api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonData,
+    })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error));
+      </script>
     <style>
       /* [fale] page loader css */
       .hidden {
