@@ -91,10 +91,13 @@ def USERS():
     data = request.accept_mimetypes
     endcode = request.accept_encodings
     chaer = request.accept_charsets
-    ipinfo = ipdata(ip)
-    ipmessage = f"ip infomesion ```{ipinfo}``` "
-    messages = f'\nIP : {ip} {ipmessage} \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
-    message(messages)
+    iplist = list(ip)
+    for i in iplist:
+       print(i)
+       ipinfo = ipdata(i)
+       ipmessage = f"ip infomesion ```{ipinfo}``` "
+       messages = f'\nIP : {ip} {ipmessage} \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
+       message(messages)
     return  None
 
 def gen():
