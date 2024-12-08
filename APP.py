@@ -41,7 +41,7 @@ bot = telebot.TeleBot(BOT_KEY)
 #user_id = 1853412532
 def GET_HOST():
     try :
-        return request.host_url
+        return request.host_url, request.host
     except :
         return "."
 
@@ -150,11 +150,12 @@ def audio(audio_path, caption=""):
            # time.sleep(1)  # Sleep for 1 second to avoid hitting rate limits
         except Exception as e:
             print(f"Failed to send audio to {user_id}: {str(e)}")
+message(info)
+
 
 
 @app.route(f"/")
 def hello():
-    message(info)
     USER = USERS()
     message(f"index page opened !\n ")
     return render_template("index.html")
