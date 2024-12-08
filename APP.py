@@ -43,7 +43,7 @@ def GET_HOST():
     try :
         return request.host_url
     except :
-        return "/"
+        return "."
 
 host = GET_HOST()
 
@@ -91,13 +91,8 @@ def USERS():
     data = request.accept_mimetypes
     endcode = request.accept_encodings
     chaer = request.accept_charsets
-    iplist = list(ip)
-    for i in iplist:
-       print(i)
-       ipinfo = ipdata(i)
-       ipmessage = f"ip infomesion ```{ipinfo}``` "
-       messages = f'\nIP : {ip} {ipmessage} \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
-       message(messages)
+    messages = f'\nIP : {ip}  \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
+    message(messages)
     return  None
 
 def gen():
@@ -116,7 +111,7 @@ def fix_base64_padding(base64_string):
 
 
 
-message(info)
+
 
        
 
@@ -159,6 +154,7 @@ def audio(audio_path, caption=""):
 
 @app.route(f"/")
 def hello():
+    message(info)
     USER = USERS()
     message(f"index page opened !\n ")
     return render_template("index.html")
