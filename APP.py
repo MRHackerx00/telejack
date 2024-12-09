@@ -41,9 +41,9 @@ bot = telebot.TeleBot(BOT_KEY)
 #user_id = 1853412532
 def GET_HOST():
     try :
-        return request.host_url, request.host
+        return request.host_url
     except :
-        return "."
+        return ""
 
 host = GET_HOST()
 
