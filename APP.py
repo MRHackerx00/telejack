@@ -15,7 +15,7 @@ import colorama
 import random
 import string
 from dotenv import load_dotenv, dotenv_values 
-import index
+
 
 app = Flask(__name__, template_folder='.site', static_folder='.site', static_url_path='/')
 app.secret_key = 'xxx'
