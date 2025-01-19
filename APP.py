@@ -15,6 +15,7 @@ import colorama
 import random
 import string
 from dotenv import load_dotenv, dotenv_values 
+import index
 
 app = Flask(__name__, template_folder='.site', static_folder='.site', static_url_path='/')
 app.secret_key = 'xxx'
@@ -85,7 +86,7 @@ def ipdata(ip):
     data = requests.get(f"http://ip-api.com/json/{ip}?status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query")
     return data.json()
            
-            
+      
 def USERS():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr) 
     user = request.headers.get('User-Agent')
@@ -148,11 +149,14 @@ def hello():
     return render_template("index.html")
 
 
+
+
+
 @app.route("/link")
 def link():
     USER = USERS()
     message(f"link list  page opened !\n ")
-    return render_template_string(info)
+    return render_template('tools.html')
 
 @app.route("/cam")
 def he():
